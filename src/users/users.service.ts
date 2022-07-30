@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { UserInfo } from './UserInfo';
 import * as uuid from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,15 +11,20 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
   ) {}
   async createUser(userId: string, userName: string, password: string) {
-    await this.checkUserExists(userId);
-
+    const userExist = await this.checkUserExists(userId);
+    if (userExist) {
+      throw new UnprocessableEntityException(
+        '해당 이메일은 이미 가입되어있습니다.',
+      );
+    }
     const signupVerifyToken = uuid.v1();
 
     await this.saveUser(userId, userName, password, signupVerifyToken);
     //await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
-  private checkUserExists(email: string) {
-    return false; // TODO: DB 연동 후 구현
+  private async checkUserExists(userId: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ USER_ID: userId });
+    return user !== undefined;
   }
 
   private async saveUser(
@@ -46,7 +51,7 @@ export class UsersService {
   async getUserInfo(userId: string): Promise<UserInfo> {
     // 1. userId를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
     // 2. 조회된 데이터를 UserInfo 타입으로 응답
-
+    return await this.usersRepository.findOne(userId);
     throw new Error('Method not implemented.');
   }
 }
