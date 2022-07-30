@@ -1,27 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { UserInfo } from './UserInfo';
 import * as uuid from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from './entity/users.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class UsersService {
-  async createUser(name: string, email: string, password: string) {
-    await this.checkUserExists(email);
+  constructor(
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+  ) {}
+  async createUser(userId: string, userName: string, password: string) {
+    await this.checkUserExists(userId);
 
     const signupVerifyToken = uuid.v1();
 
-    await this.saveUser(name, email, password, signupVerifyToken);
+    await this.saveUser(userId, userName, password, signupVerifyToken);
     //await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
   private checkUserExists(email: string) {
     return false; // TODO: DB 연동 후 구현
   }
 
-  private saveUser(
-    name: string,
-    email: string,
+  private async saveUser(
+    userId: string,
+    userName: string,
     password: string,
     signupVerifyToken: string,
   ) {
-    return; // TODO: DB 연동 후 구현
+    const user = new UserEntity();
+    user.USER_ID = userId;
+    user.USER_NAME = userName;
+    user.PASSWORD = password;
+    user.SIGN_VERIFY_TOKEN = signupVerifyToken;
+    await this.usersRepository.save(user);
   }
 
   async login(email: string, password: string): Promise<string> {
