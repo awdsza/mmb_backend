@@ -11,7 +11,11 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
   ) {}
-  async createUser(userId: string, userName: string, password: string) {
+  async createUser(
+    userId: string,
+    userName: string,
+    password: string,
+  ): Promise<UserEntity> {
     const userExist = await this.checkUserExists(userId);
     if (userExist) {
       throw new UnprocessableEntityException(
@@ -20,11 +24,11 @@ export class UsersService {
     }
     const signupVerifyToken = uuid.v1();
 
-    await this.saveUser(userId, userName, password, signupVerifyToken);
+    return await this.saveUser(userId, userName, password, signupVerifyToken);
     //await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
   private async checkUserExists(userId: string): Promise<boolean> {
-    const user = await this.usersRepository.findOne({ USER_ID: userId });
+    const user = await this.usersRepository.findOne({ userId });
     return user !== undefined;
   }
 
@@ -32,27 +36,27 @@ export class UsersService {
     userId: string,
     userName: string,
     password: string,
-    signupVerifyToken: string,
-  ) {
+    signVerifyToken: string,
+  ): Promise<UserEntity> {
     const salt = await bcrypt.genSalt();
 
     const encryptedPassowrd = await bcrypt.hash(password, salt); // sync
 
     const user = new UserEntity();
-    user.USER_ID = userId;
-    user.USER_NAME = userName;
-    user.PASSWORD = encryptedPassowrd;
-    user.SIGN_VERIFY_TOKEN = signupVerifyToken;
-    await this.usersRepository.save(user);
+    user.userId = userId;
+    user.userName = userName;
+    user.password = encryptedPassowrd;
+    user.signVerifyToken = signVerifyToken;
+    return await this.usersRepository.save(user);
   }
 
   async login(userId: string, password: string): Promise<UserInfo> {
     // TODO
     // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
     const user = await this.usersRepository.findOne({
-      USER_ID: userId,
+      userId,
     });
-    const comparePassword = await bcrypt.compare(password, user.PASSWORD);
+    const comparePassword = await bcrypt.compare(password, user.password);
     if (user && comparePassword) {
       // 2. JWT를 발급
     } else {
