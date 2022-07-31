@@ -21,10 +21,10 @@ export class UsersController {
   }
 
   @Post('/login')
-  async login(@Body() dto: UserLoginDto): Promise<string> {
-    const { email, password } = dto;
+  async login(@Body() dto: UserLoginDto): Promise<UserInfo> {
+    const { userId, password } = dto;
 
-    return await this.usersService.login(email, password);
+    return await this.usersService.login(userId, password);
   }
 
   @Get('/:id')

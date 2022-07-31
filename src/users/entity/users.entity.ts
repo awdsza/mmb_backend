@@ -9,7 +9,7 @@ export class UserEntity {
   @Column({ length: 50 })
   USER_NAME: string;
 
-  @Column({ length: 30 })
+  @Column({ length: 255 })
   PASSWORD: string;
 
   @Column({ length: 100 })
