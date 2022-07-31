@@ -4,14 +4,20 @@ import { UserInfo } from './UserInfo';
 import { UserLoginDto } from './dto/user-login.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UsersService } from './users.service';
+import { UserEntity } from './entity/users.entity';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
-  async createUser(@Body() dto: CreateUserDto): Promise<void> {
+  async createUser(@Body() dto: CreateUserDto): Promise<object> {
     const { userId, userName, password } = dto;
-    await this.usersService.createUser(userId, userName, password);
+    const { signVerifyToken } = await this.usersService.createUser(
+      userId,
+      userName,
+      password,
+    );
+    return { userId, userName, signVerifyToken };
   }
 
   @Post('/email-verify')

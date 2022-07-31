@@ -4,14 +4,14 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 export class UserEntity {
   @Column({ length: 50 })
   @PrimaryColumn()
-  USER_ID: string;
+  userId: string;
 
   @Column({ length: 50 })
-  USER_NAME: string;
+  userName: string;
 
   @Column({ length: 255 })
-  PASSWORD: string;
+  password: string;
 
   @Column({ length: 100 })
-  SIGN_VERIFY_TOKEN: string;
+  signVerifyToken: string;
 }
