@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entity/users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import * as jsonwebtoken from 'jsonwebtoken';
 @Injectable()
 export class UsersService {
   constructor(
@@ -50,22 +51,32 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async login(userId: string, password: string): Promise<UserInfo> {
+  async login(userId: string, password: string): Promise<object> {
     // TODO
     // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
+    let token = null;
     const user = await this.usersRepository.findOne({
       userId,
     });
-    const comparePassword = await bcrypt.compare(password, user.password);
-    if (user && comparePassword) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       // 2. JWT를 발급
+      token = await jsonwebtoken.sign(
+        {
+          userId,
+          userName: user.userName,
+          signVerifyToken: user.signVerifyToken,
+        },
+        process.env.SECRET_KEY,
+        { expiresIn: '7d' },
+      );
     } else {
       throw new UnprocessableEntityException(
         '해당 이메일은 계정은 없는계정입니다. 회원가입후 시도해주세요',
       );
     }
-    return user;
+    return { isSuccess: true, token };
   }
+
   async getUserInfo(userId: string): Promise<UserInfo> {
     // 1. userId를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
     // 2. 조회된 데이터를 UserInfo 타입으로 응답
