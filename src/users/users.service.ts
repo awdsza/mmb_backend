@@ -74,7 +74,7 @@ export class UsersService {
         '해당 이메일은 계정은 없는계정입니다. 회원가입후 시도해주세요',
       );
     }
-    return { isSuccess: true, token };
+    return { isSuccess: true, token, userName: user.userName };
   }
 
   async getUserInfo(userId: string): Promise<UserInfo> {
