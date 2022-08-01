@@ -27,10 +27,10 @@ export class UsersController {
   }
 
   @Post('/login')
-  async login(@Body() dto: UserLoginDto): Promise<UserInfo> {
+  async login(@Body() dto: UserLoginDto): Promise<object> {
     const { userId, password } = dto;
-
-    return await this.usersService.login(userId, password);
+    const jwtResult = await this.usersService.login(userId, password);
+    return jwtResult;
   }
 
   @Get('/:id')
