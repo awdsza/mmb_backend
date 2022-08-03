@@ -1,9 +1,11 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('mms_user_info')
 export class UserEntity {
+  @PrimaryGeneratedColumn()
+  userSeq: number;
+
   @Column({ length: 50 })
-  @PrimaryColumn()
   userId: string;
 
   @Column({ length: 50 })
