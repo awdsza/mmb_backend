@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('mms_user_info')
 export class UserEntity {
   @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   userSeq: number;
 
   @Column({ length: 50 })
