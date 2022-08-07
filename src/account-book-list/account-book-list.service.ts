@@ -3,7 +3,6 @@ import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListEntity } from './entity/AccountBookList.entity';
 import { getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
 @Injectable()
@@ -44,7 +43,7 @@ export class AccountBookListService {
     const decoded = await verify(token, process.env.SECRET_KEY);
 
     return this.accountBookListEntity.save({
-      userId: decoded.userId,
+      userSeq: decoded.userSeq,
       inOut,
       bookDate,
       bookTitle,
