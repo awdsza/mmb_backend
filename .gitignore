@@ -37,4 +37,4 @@ lerna-debug.log*
 .production.env
 .stage.env
 .development.env
-launch.json
+/.vscode
