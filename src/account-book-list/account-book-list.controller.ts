@@ -1,17 +1,27 @@
-import { Controller, Get, Post, Put, Body } from '@nestjs/common';
-import { AccountBookListDto } from './dto/create-account-book-list.dto';
+import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
+import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListService } from './account-book-list.service';
+import { AccountBookListBaseDto } from './dto/account-book-list.dto';
+import { ParamAccountBookListDto } from './dto/param-account-book-list.dto';
 @Controller('accountbook')
 export class AccountBookListController {
   constructor(private accountBookListService: AccountBookListService) {}
 
-  @Get('/:userSeq')
-  async getAccountBookList(): Promise<object> {
-    return Object.create({});
+  @Get('/:userSeq/bookDate/:searchStartDate/:searchEndDate')
+  async getAccountBookList(
+    @Param('userSeq') userSeq: number,
+    @Param('searchStartDate') searchStartDate: string,
+    @Param('searchEndDate') searchEndDate: string,
+  ): Promise<AccountBookListBaseDto[]> {
+    return await this.accountBookListService.getAccountBookList(
+      userSeq,
+      searchStartDate,
+      searchEndDate,
+    );
   }
   @Post()
   async createAccountBook(
-    @Body() accountBookListdto: AccountBookListDto,
+    @Body() accountBookListdto: CreateAccountBookListDto,
   ): Promise<object> {
     const result = await this.accountBookListService.createAccountBook(
       accountBookListdto,

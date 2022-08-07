@@ -1,24 +1,23 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
-
 @Entity('mms_account_book_list')
 export class AccountBookListEntity {
   @PrimaryGeneratedColumn()
   @PrimaryColumn()
   seq: number;
 
-  @Column({ length: 50 })
-  userId: string;
+  @Column()
+  userSeq: number;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   inOut: string;
 
-  @Column()
+  @Column({ nullable: true })
   bookDate: Date;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   bookTitle: string;
 
-  @Column()
+  @Column({ nullable: true })
   amount: number;
 
   @Column({ length: 100, nullable: true })
