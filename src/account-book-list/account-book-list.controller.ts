@@ -2,7 +2,6 @@ import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
 import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListService } from './account-book-list.service';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
-import { ParamAccountBookListDto } from './dto/param-account-book-list.dto';
 @Controller('accountbook')
 export class AccountBookListController {
   constructor(private accountBookListService: AccountBookListService) {}
