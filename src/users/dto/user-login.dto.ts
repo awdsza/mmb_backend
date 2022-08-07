@@ -1,4 +1,4 @@
 export class UserLoginDto {
-  email: string;
-  password: string;
+  readonly userId: string;
+  readonly password: string;
 }

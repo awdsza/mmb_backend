@@ -1,17 +1,20 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { AccountBookListEntity } from 'src/account-book-list/entity/AccountBookList.entity';
 @Entity('mms_user_info')
 export class UserEntity {
-  @Column({ length: 50 })
+  @PrimaryGeneratedColumn()
   @PrimaryColumn()
-  USER_ID: string;
+  userSeq: number;
 
   @Column({ length: 50 })
-  USER_NAME: string;
+  userId: string;
 
-  @Column({ length: 30 })
-  PASSWORD: string;
+  @Column({ length: 50 })
+  userName: string;
+
+  @Column({ length: 255 })
+  password: string;
 
   @Column({ length: 100 })
-  SIGN_VERIFY_TOKEN: string;
+  signVerifyToken: string;
 }

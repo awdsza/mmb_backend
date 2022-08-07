@@ -4,6 +4,10 @@ import { UsersController } from './users/users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { UserEntity } from './users/entity/users.entity';
+import { AccountBookListEntity } from './account-book-list/entity/AccountBookList.entity';
+import { AccountBookListController } from './account-book-list/account-book-list.controller';
+import { AccountBookListService } from './account-book-list/account-book-list.service';
 
 dotenv.config({
   path: path.resolve(
@@ -26,8 +30,9 @@ dotenv.config({
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
+    TypeOrmModule.forFeature([UserEntity, AccountBookListEntity]),
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
+  controllers: [UsersController, AccountBookListController],
+  providers: [UsersService, AccountBookListService],
 })
 export class AppModule {}
