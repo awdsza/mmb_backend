@@ -63,6 +63,7 @@ export class UsersService {
       token = await jsonwebtoken.sign(
         {
           userId,
+          userSeq: user.userSeq,
           userName: user.userName,
           signVerifyToken: user.signVerifyToken,
         },
