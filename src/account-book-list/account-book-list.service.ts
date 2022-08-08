@@ -26,6 +26,22 @@ export class AccountBookListService {
       )
       .getMany();
   }
+  async getAccountBook(seq: number): Promise<AccountBookListBaseDto> {
+    return await getRepository(AccountBookListEntity)
+      .createQueryBuilder('accountBook')
+      .select([
+        'accountBook.seq',
+        'accountBook.userSeq',
+        'accountBook.inOut',
+        'accountBook.bookDate',
+        'accountBook.bookTitle',
+        'accountBook.amount',
+        'accountBook.inPurpose',
+        'accountBook.outGoingPurpose',
+      ])
+      .where('accountBook.seq=:seq', { seq })
+      .getOne();
+  }
   async createAccountBook(
     createAccountBookListDto: CreateAccountBookListDto,
   ): Promise<object> {
