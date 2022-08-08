@@ -18,6 +18,13 @@ export class AccountBookListController {
       searchEndDate,
     );
   }
+  @Get('/:seq')
+  async getAccountBook(
+    @Param('seq') seq: number,
+  ): Promise<AccountBookListBaseDto> {
+    return await this.accountBookListService.getAccountBook(seq);
+  }
+
   @Post()
   async createAccountBook(
     @Body() accountBookListdto: CreateAccountBookListDto,
