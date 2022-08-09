@@ -94,4 +94,7 @@ export class AccountBookListService {
       outGoingPurpose,
     });
   }
+  async deleteAccountBook(seq: number): Promise<object> {
+    return this.accountBookListEntity.delete(seq);
+  }
 }
