@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Query,
+  Delete,
+} from '@nestjs/common';
 import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListService } from './account-book-list.service';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
@@ -49,6 +58,15 @@ export class AccountBookListController {
     const result = await this.accountBookListService.updateAccountBook(
       updateAccountBookDto,
     );
+    if (result) {
+      return { ...result, isSuccess: true };
+    } else {
+      return { ...result, isSuccess: false };
+    }
+  }
+  @Delete('/:seq')
+  async deleteAccountBook(@Param('seq') seq: number): Promise<object> {
+    const result = await this.accountBookListService.deleteAccountBook(seq);
     if (result) {
       return { ...result, isSuccess: true };
     } else {
