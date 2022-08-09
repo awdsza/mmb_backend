@@ -5,6 +5,7 @@ import { getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { verify } from 'jsonwebtoken';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
+import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 @Injectable()
 export class AccountBookListService {
   constructor(
@@ -42,10 +43,35 @@ export class AccountBookListService {
       .where('accountBook.seq=:seq', { seq })
       .getOne();
   }
+  async updateAccountBook(
+    updateAccountBookDto: UpdateAccountBookDto,
+  ): Promise<object> {
+    const {
+      seq,
+      token,
+      inOut,
+      bookDate,
+      bookTitle,
+      amount,
+      inPurpose,
+      outGoingPurpose,
+    } = updateAccountBookDto;
+    const decoded = await verify(token, process.env.SECRET_KEY);
+
+    return this.accountBookListEntity.update(seq, {
+      userSeq: decoded.userSeq,
+      inOut,
+      bookDate,
+      bookTitle,
+      amount,
+      inPurpose,
+      outGoingPurpose,
+      updateDate: () => 'NOW(3)',
+    });
+  }
   async createAccountBook(
     createAccountBookListDto: CreateAccountBookListDto,
   ): Promise<object> {
-    const returnObject = Object.create({});
     const {
       token,
       inOut,
