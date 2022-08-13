@@ -17,11 +17,11 @@ import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 export class AccountBookListController {
   constructor(private accountBookListService: AccountBookListService) {}
 
-  @Get('/:userSeq/bookDate/:searchStartDate/:searchEndDate')
+  @Get()
   async getAccountBookList(
-    @Param('userSeq') userSeq: number,
-    @Param('searchStartDate') searchStartDate: string,
-    @Param('searchEndDate') searchEndDate: string,
+    @Query('userSeq') userSeq: number,
+    @Query('searchStartDate') searchStartDate: string,
+    @Query('searchEndDate') searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
     return await this.accountBookListService.getAccountBookList(
       userSeq,
