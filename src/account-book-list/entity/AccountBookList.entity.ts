@@ -11,7 +11,7 @@ export class AccountBookListEntity {
   @Column({ length: 50, nullable: true })
   inOut: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   bookDate: Date;
 
   @Column({ length: 100, nullable: true })
