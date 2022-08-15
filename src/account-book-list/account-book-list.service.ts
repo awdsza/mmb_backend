@@ -22,9 +22,11 @@ export class AccountBookListService {
       .createQueryBuilder('accountBook')
       .where('userSeq=:userSeq', { userSeq })
       .andWhere(
-        "accountBook.bookDate between DATE_FORMAT(CONCAT(:searchStartDate,' 00:00:00'),'%Y-%m-%d %H:%i:%s') and DATE_FORMAT(CONCAT(:searchEndDate,' 23:59:59'),'%Y-%m-%d %H:%i:%s')",
+        "accountBook.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
         { searchStartDate, searchEndDate },
       )
+      .orderBy('bookDate', 'DESC')
+      .orderBy('seq', 'ASC')
       .getMany();
   }
   async getAccountBook(seq: number): Promise<AccountBookListBaseDto> {
