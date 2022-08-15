@@ -25,6 +25,8 @@ export class AccountBookListService {
         "accountBook.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
         { searchStartDate, searchEndDate },
       )
+      .orderBy('bookDate', 'DESC')
+      .orderBy('seq', 'ASC')
       .getMany();
   }
   async getAccountBook(seq: number): Promise<AccountBookListBaseDto> {
