@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListEntity } from './entity/AccountBookList.entity';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { verify } from 'jsonwebtoken';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
@@ -28,6 +28,37 @@ export class AccountBookListService {
       .orderBy('bookDate', 'DESC')
       .orderBy('seq', 'ASC')
       .getMany();
+  }
+  async getAccountBookListByCalendar(
+    userSeq: number,
+    searchStartDate: string,
+    searchEndDate: string,
+  ): Promise<AccountBookListBaseDto[]> {
+    const Result = getConnection()
+      .createQueryBuilder()
+      .select([
+        'SUM(res.amount) as amount',
+        'res.inOutType as `inOut`',
+        'res.bookDate as bookDate',
+      ])
+      .from((subQuery) => {
+        return subQuery
+          .select([
+            "DATE_FORMAT(accountBook.bookDate,'%Y.%m.%d') as bookDate",
+            'accountBook.inOut as inOutType',
+            'accountBook.amount as amount',
+          ])
+          .from(AccountBookListEntity, 'accountBook')
+          .where('accountBook.userSeq=:userSeq', { userSeq })
+          .andWhere(
+            "accountBook.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
+            { searchStartDate, searchEndDate },
+          );
+      }, 'res')
+      .groupBy('res.bookDate,res.inOutType')
+      .orderBy('res.bookDate', 'DESC')
+      .getRawMany();
+    return Result;
   }
   async getAccountBook(seq: number): Promise<AccountBookListBaseDto> {
     return await getRepository(AccountBookListEntity)

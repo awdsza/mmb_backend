@@ -29,6 +29,18 @@ export class AccountBookListController {
       searchEndDate,
     );
   }
+  @Get('/calendar')
+  async getAccountBookListByCalendar(
+    @Query('userSeq') userSeq: number,
+    @Query('searchStartDate') searchStartDate: string,
+    @Query('searchEndDate') searchEndDate: string,
+  ): Promise<AccountBookListBaseDto[]> {
+    return await this.accountBookListService.getAccountBookListByCalendar(
+      userSeq,
+      searchStartDate,
+      searchEndDate,
+    );
+  }
   @Get('/:seq')
   async getAccountBook(
     @Param('seq') seq: number,
