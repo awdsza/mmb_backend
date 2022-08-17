@@ -26,7 +26,6 @@ export class AccountBookListService {
         { searchStartDate, searchEndDate },
       )
       .orderBy('bookDate', 'DESC')
-      .orderBy('seq', 'ASC')
       .getMany();
   }
   async getAccountBookListByCalendar(
