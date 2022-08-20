@@ -1,5 +1,5 @@
 export class AccountBookListBaseDto {
-  readonly inOut: string;
+  readonly inOutType: string;
   readonly bookDate: object;
   readonly bookTitle: string;
   readonly amount: number;

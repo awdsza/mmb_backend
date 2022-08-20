@@ -37,14 +37,14 @@ export class AccountBookListService {
       .createQueryBuilder()
       .select([
         'SUM(res.amount) as amount',
-        'res.inOutType as `inOut`',
+        'res.inOutType as inOutType',
         'res.bookDate as bookDate',
       ])
       .from((subQuery) => {
         return subQuery
           .select([
             "DATE_FORMAT(accountBook.bookDate,'%Y.%m.%d') as bookDate",
-            'accountBook.inOut as inOutType',
+            'accountBook.inOutType as inOutType',
             'accountBook.amount as amount',
           ])
           .from(AccountBookListEntity, 'accountBook')
@@ -66,13 +66,13 @@ export class AccountBookListService {
     return await getRepository(AccountBookListEntity)
       .createQueryBuilder('accountBook')
       .select([
-        'accountBook.seq',
-        'accountBook.userSeq',
-        'accountBook.inOut',
-        'accountBook.bookTitle',
-        'accountBook.amount',
-        'accountBook.inPurpose',
-        'accountBook.outGoingPurpose',
+        'seq',
+        'userSeq',
+        'inOutType',
+        'bookTitle',
+        'amount',
+        'inPurpose',
+        'outGoingPurpose',
       ])
       .where('accountBook.userSeq=:userSeq', { userSeq })
       .andWhere("accountBook.bookDate=DATE_FORMAT(:bookDate,'%Y-%m-%d')", {
@@ -87,7 +87,7 @@ export class AccountBookListService {
       .select([
         'accountBook.seq',
         'accountBook.userSeq',
-        'accountBook.inOut',
+        'accountBook.inOutType',
         'accountBook.bookDate',
         'accountBook.bookTitle',
         'accountBook.amount',
@@ -103,7 +103,7 @@ export class AccountBookListService {
     const {
       seq,
       token,
-      inOut,
+      inOutType,
       bookDate,
       bookTitle,
       amount,
@@ -114,7 +114,7 @@ export class AccountBookListService {
 
     return this.accountBookListEntity.update(seq, {
       userSeq: decoded.userSeq,
-      inOut,
+      inOutType,
       bookDate,
       bookTitle,
       amount,
@@ -128,7 +128,7 @@ export class AccountBookListService {
   ): Promise<object> {
     const {
       token,
-      inOut,
+      inOutType,
       bookDate,
       bookTitle,
       amount,
@@ -140,7 +140,7 @@ export class AccountBookListService {
 
     return this.accountBookListEntity.save({
       userSeq: decoded.userSeq,
-      inOut,
+      inOutType,
       bookDate,
       bookTitle,
       amount,

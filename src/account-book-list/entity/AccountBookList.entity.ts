@@ -9,7 +9,7 @@ export class AccountBookListEntity {
   userSeq: number;
 
   @Column({ length: 50, nullable: true })
-  inOut: string;
+  inOutType: string;
 
   @Column({ type: 'date', nullable: true })
   bookDate: Date;
