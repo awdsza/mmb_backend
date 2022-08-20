@@ -41,6 +41,16 @@ export class AccountBookListController {
       searchEndDate,
     );
   }
+  @Get('/calendar/detail')
+  async getAccountBookDetailByCalendar(
+    @Query('userSeq') userSeq: number,
+    @Query('bookDate') bookDate: string,
+  ): Promise<AccountBookListBaseDto[]> {
+    return await this.accountBookListService.getAccountBookDetailByCalendar(
+      userSeq,
+      bookDate,
+    );
+  }
   @Get('/:seq')
   async getAccountBook(
     @Param('seq') seq: number,
