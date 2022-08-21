@@ -55,6 +55,7 @@ export class UsersService {
     // TODO
     // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
     let token = null;
+    const syncDateTime = new Date().getTime();
     const user = await this.usersRepository.findOne({
       userId,
     });
@@ -80,6 +81,7 @@ export class UsersService {
       token,
       userName: user.userName,
       userSeq: user.userSeq,
+      syncDateTime,
     };
   }
 
