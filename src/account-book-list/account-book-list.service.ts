@@ -67,12 +67,12 @@ export class AccountBookListService {
   ): Promise<WeekAccountBookListDto[]> {
     const Result = getConnection()
       .createQueryBuilder()
-      .select(['amount', 'inOutType', 'bookDateRange'])
+      .select(['inComeAmount', 'outGoingAmount', 'bookDateRange'])
       .from((subQuery) => {
         return subQuery
           .select([
-            'sum(amount) as amount',
-            'inOutType',
+            `SUM((CASE WHEN inOutType='inCome' THEN amount ELSE 0 END)) as inComeAmount`,
+            `SUM((CASE WHEN inOutType='outGoing' THEN amount ELSE 0 END)) as outGoingAmount`,
             `CONCAT(DATE_FORMAT(DATE_ADD(bookDate,
               INTERVAL(1-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")," - ",DATE_FORMAT(DATE_ADD(bookDate,
               INTERVAL(7-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")) AS bookDateRange`,
@@ -84,7 +84,7 @@ export class AccountBookListService {
             { searchStartDate, searchEndDate },
           ).groupBy(`CONCAT(DATE_FORMAT(DATE_ADD(bookDate,
             INTERVAL(1-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")," - ",DATE_FORMAT(DATE_ADD(bookDate,
-            INTERVAL(7-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")),inOutType`);
+            INTERVAL(7-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d"))`);
       }, 'res')
       .orderBy('res.bookDateRange', 'DESC')
       .getRawMany();
