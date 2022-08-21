@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { verify } from 'jsonwebtoken';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
 import { UpdateAccountBookDto } from './dto/update-account-book.dto';
+import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
 @Injectable()
 export class AccountBookListService {
   constructor(
@@ -57,6 +58,37 @@ export class AccountBookListService {
       .groupBy('res.bookDate,res.inOutType')
       .orderBy('res.bookDate', 'DESC')
       .getRawMany();
+    return Result;
+  }
+  async getAccountBookWeekList(
+    userSeq: number,
+    searchStartDate: string,
+    searchEndDate: string,
+  ): Promise<WeekAccountBookListDto[]> {
+    const Result = getConnection()
+      .createQueryBuilder()
+      .select(['amount', 'inOutType', 'bookDateRange'])
+      .from((subQuery) => {
+        return subQuery
+          .select([
+            'sum(amount) as amount',
+            'inOutType',
+            `CONCAT(DATE_FORMAT(DATE_ADD(bookDate,
+              INTERVAL(1-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")," - ",DATE_FORMAT(DATE_ADD(bookDate,
+              INTERVAL(7-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")) AS bookDateRange`,
+          ])
+          .from(AccountBookListEntity, 'accountBook')
+          .where('accountBook.userSeq=:userSeq', { userSeq })
+          .andWhere(
+            "accountBook.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
+            { searchStartDate, searchEndDate },
+          ).groupBy(`CONCAT(DATE_FORMAT(DATE_ADD(bookDate,
+            INTERVAL(1-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")," - ",DATE_FORMAT(DATE_ADD(bookDate,
+            INTERVAL(7-DAYOFWEEK(bookDate)) DAY),"%Y.%m.%d")),inOutType`);
+      }, 'res')
+      .orderBy('res.bookDateRange', 'DESC')
+      .getRawMany();
+
     return Result;
   }
   async getAccountBookDetailByCalendar(
