@@ -49,4 +49,8 @@ export class CategoryService {
       sortKey: recentData.sortKey,
     });
   }
+
+  async getCategory(seq: number): Promise<CategoryBaseDto> {
+    return await this.categoryEntity.findOne({ seq });
+  }
 }

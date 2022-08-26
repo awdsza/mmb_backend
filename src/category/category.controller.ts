@@ -26,4 +26,10 @@ export class CategoryController {
       categoryName,
     );
   }
+  @Get('/:seq')
+  async getCategory(@Param('seq') seq: number): Promise<CategoryBaseDto> {
+    try {
+      return await this.categoryService.getCategory(seq);
+    } catch (e) {}
+  }
 }
