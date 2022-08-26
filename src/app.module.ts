@@ -8,7 +8,9 @@ import { UserEntity } from './users/entity/users.entity';
 import { AccountBookListEntity } from './account-book-list/entity/AccountBookList.entity';
 import { AccountBookListController } from './account-book-list/account-book-list.controller';
 import { AccountBookListService } from './account-book-list/account-book-list.service';
-
+import { CategoryController } from './category/category.controller';
+import { CategoryService } from './category/category.service';
+import { CategoryEntity } from './category/entity/category.entity';
 dotenv.config({
   path: path.resolve(
     process.env.NODE_ENV === 'production'
@@ -30,9 +32,13 @@ dotenv.config({
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
-    TypeOrmModule.forFeature([UserEntity, AccountBookListEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      AccountBookListEntity,
+      CategoryEntity,
+    ]),
   ],
-  controllers: [UsersController, AccountBookListController],
-  providers: [UsersService, AccountBookListService],
+  controllers: [UsersController, AccountBookListController, CategoryController],
+  providers: [UsersService, AccountBookListService, CategoryService],
 })
 export class AppModule {}
