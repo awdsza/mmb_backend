@@ -5,15 +5,16 @@ import { CategoryBaseDto } from './dto/category-base.dto';
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
-  @Get('/:inOutType')
-  async getCategory(
+  @Get('/:userSeq/:inOutType')
+  async getCategories(
     @Param('inOutType') inOutType: string,
-    @Query('userSeq') userSeq: number,
+    @Param('userSeq') userSeq: number,
   ): Promise<CategoryBaseDto[]> {
     try {
-      return await this.categoryService.getCategory(inOutType, userSeq);
+      return await this.categoryService.getCategories(inOutType, userSeq);
     } catch (e) {}
   }
+
   @Post()
   async saveCategory(
     @Body() categoryParamDto: CategoryBaseDto,

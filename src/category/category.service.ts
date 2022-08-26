@@ -9,16 +9,17 @@ export class CategoryService {
     @InjectRepository(CategoryEntity)
     private categoryEntity: Repository<CategoryEntity>,
   ) {}
-  async getCategory(
+  async getCategories(
     inOutType: string,
     userSeq: number,
   ): Promise<CategoryBaseDto[]> {
     return await getRepository(CategoryEntity)
-      .createQueryBuilder('category')
+      .createQueryBuilder()
       .select(['seq', 'inOutType', 'category', 'categoryName'])
       .where('userSeq=:userSeq', { userSeq })
       .andWhere('inOutType=:inOutType', { inOutType })
       .orderBy('seq')
+      .orderBy('sortKey', 'DESC')
       .getRawMany();
   }
 
