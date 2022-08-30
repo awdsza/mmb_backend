@@ -53,4 +53,12 @@ export class CategoryService {
   async getCategory(seq: number): Promise<CategoryBaseDto> {
     return await this.categoryEntity.findOne({ seq });
   }
+
+  async updateCategory(categoryParamDto: CategoryBaseDto): Promise<object> {
+    const { categoryName, seq } = categoryParamDto;
+    return await this.categoryEntity.update(seq, {
+      categoryName,
+      updateDate: () => 'NOW(3)',
+    });
+  }
 }
