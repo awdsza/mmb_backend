@@ -61,4 +61,7 @@ export class CategoryService {
       updateDate: () => 'NOW(3)',
     });
   }
+  async deleteCategory(seq: number): Promise<object> {
+    return await this.categoryEntity.delete(seq);
+  }
 }

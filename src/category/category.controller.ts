@@ -8,6 +8,7 @@ import {
   Put,
   UnauthorizedException,
   InternalServerErrorException,
+  Delete,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryBaseDto } from './dto/category-base.dto';
@@ -61,6 +62,19 @@ export class CategoryController {
         ...categoryParamDto,
         seq,
       });
+      if (result) {
+        return { ...result, isSuccess: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (e) {
+      return { ...e, isSuccess: false };
+    }
+  }
+  @Delete('/:seq')
+  async deleteCategory(@Param('seq') seq: number): Promise<object> {
+    try {
+      const result = await this.categoryService.deleteCategory(seq);
       if (result) {
         return { ...result, isSuccess: true };
       } else {
