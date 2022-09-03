@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryBaseDto } from './dto/category-base.dto';
-
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
@@ -52,6 +51,7 @@ export class CategoryController {
       return await this.categoryService.getCategory(seq);
     } catch (e) {}
   }
+
   @Put('/:seq')
   async updateCategory(
     @Param('seq') seq: number,
@@ -62,6 +62,27 @@ export class CategoryController {
         ...categoryParamDto,
         seq,
       });
+      if (result) {
+        return { ...result, isSuccess: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (e) {
+      return { ...e, isSuccess: false };
+    }
+  }
+  @Put('/sort/:userseq/:inouttype')
+  async updateCategoriesSort(
+    @Param('userseq') userSeq: number,
+    @Param('inouttpye') inOutType: string,
+    @Body() categoryParamDto: CategoryBaseDto[],
+  ): Promise<object> {
+    try {
+      const result = await this.categoryService.updateCategoriesSort(
+        userSeq,
+        inOutType,
+        categoryParamDto,
+      );
       if (result) {
         return { ...result, isSuccess: true };
       } else {

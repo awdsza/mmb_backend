@@ -15,11 +15,10 @@ export class CategoryService {
   ): Promise<CategoryBaseDto[]> {
     return await getRepository(CategoryEntity)
       .createQueryBuilder()
-      .select(['seq', 'inOutType', 'category', 'categoryName'])
+      .select(['seq', 'inOutType', 'category', 'categoryName', 'sortKey'])
       .where('userSeq=:userSeq', { userSeq })
       .andWhere('inOutType=:inOutType', { inOutType })
-      .orderBy('seq')
-      .orderBy('sortKey', 'DESC')
+      .orderBy('sortKey')
       .getRawMany();
   }
 
@@ -60,6 +59,23 @@ export class CategoryService {
       categoryName,
       updateDate: () => 'NOW(3)',
     });
+  }
+  async updateCategoriesSort(
+    userSeq: number,
+    inOutType: string,
+    categoryParamDto: CategoryBaseDto[],
+  ): Promise<object> {
+    let successCnt = 0;
+    let result = null;
+    for (let i = 0; i < categoryParamDto.length; i++) {
+      const { seq } = categoryParamDto[i];
+      result = await this.categoryEntity.update(seq, {
+        sortKey: i + 1,
+        updateDate: () => 'NOW(3)',
+      });
+      successCnt++;
+    }
+    return { successCnt, result };
   }
   async deleteCategory(seq: number): Promise<object> {
     return await this.categoryEntity.delete(seq);
