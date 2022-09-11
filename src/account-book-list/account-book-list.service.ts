@@ -145,7 +145,7 @@ export class AccountBookListService {
     const decoded = await verify(token, process.env.SECRET_KEY);
 
     return this.accountBookListEntity.update(seq, {
-      userSeq: decoded.userSeq,
+      //userSeq: decoded.userSeq,
       inOutType,
       bookDate,
       bookTitle,
@@ -171,7 +171,7 @@ export class AccountBookListService {
     const decoded = await verify(token, process.env.SECRET_KEY);
 
     return this.accountBookListEntity.save({
-      userSeq: decoded.userSeq,
+      //    userSeq: decoded.userSeq,
       inOutType,
       bookDate,
       bookTitle,

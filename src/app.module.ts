@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
-import { UsersModule } from './users/users.module';
 import { CategoryModule } from './category/category.module';
 import { AccountBookModule } from './account-book-list/accountbook.module';
+import { AuthenticationModule } from './auth/authentication.module';
 dotenv.config({
   path: path.resolve(
     process.env.NODE_ENV === 'production'
@@ -17,7 +17,7 @@ dotenv.config({
 });
 @Module({
   imports: [
-    UsersModule,
+    AuthenticationModule,
     CategoryModule,
     AccountBookModule,
     TypeOrmModule.forRoot({
