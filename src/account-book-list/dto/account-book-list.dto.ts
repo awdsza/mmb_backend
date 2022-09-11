@@ -5,4 +5,5 @@ export class AccountBookListBaseDto {
   readonly amount: number;
   readonly inPurpose: string;
   readonly outGoingPurpose: string;
+  userSeq: number;
 }

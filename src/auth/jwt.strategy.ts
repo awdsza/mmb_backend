@@ -27,7 +27,7 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
   }
   async validate(payload) {
     const { userSeq } = payload;
-    const user = this.userEntity.findOne({ userSeq });
+    const user = await this.userEntity.findOne({ userSeq });
     if (!user) {
       throw new UnauthorizedException();
     }

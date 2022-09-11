@@ -86,8 +86,12 @@ export class AccountBookListController {
 
   @Post()
   async createAccountBook(
+    @Req() req: RequestWithUser,
     @Body() accountBookListdto: CreateAccountBookListDto,
   ): Promise<object> {
+    const { user } = req;
+    const { userSeq } = user;
+    accountBookListdto = { ...accountBookListdto, userSeq };
     const result = await this.accountBookListService.createAccountBook(
       accountBookListdto,
     );
