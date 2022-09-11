@@ -17,6 +17,8 @@ import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
 import RequestWithUser from 'src/auth/requestWithUser.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { UserEntity } from 'src/users/entity/users.entity';
+import { GetUser } from 'src/auth/user-decorator';
 @Controller('accountbook')
 @UseGuards(AuthGuard('jwt'))
 export class AccountBookListController {
@@ -24,11 +26,10 @@ export class AccountBookListController {
 
   @Get()
   async getAccountBookList(
-    @Req() req: RequestWithUser,
+    @GetUser() user: UserEntity,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
-    const { user } = req;
     const { userSeq } = user;
     return await this.accountBookListService.getAccountBookList(
       userSeq,
@@ -38,11 +39,10 @@ export class AccountBookListController {
   }
   @Get('/calendar')
   async getAccountBookListByCalendar(
-    @Req() req: RequestWithUser,
+    @GetUser() user: UserEntity,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
-    const { user } = req;
     const { userSeq } = user;
     return await this.accountBookListService.getAccountBookListByCalendar(
       userSeq,
@@ -52,11 +52,10 @@ export class AccountBookListController {
   }
   @Get('/week')
   async getAccountBookWeekList(
-    @Req() req: RequestWithUser,
+    @GetUser() user: UserEntity,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<WeekAccountBookListDto[]> {
-    const { user } = req;
     const { userSeq } = user;
     return await this.accountBookListService.getAccountBookWeekList(
       userSeq,
@@ -67,10 +66,9 @@ export class AccountBookListController {
 
   @Get('/calendar/detail')
   async getAccountBookDetailByCalendar(
-    @Req() req: RequestWithUser,
+    @GetUser() user: UserEntity,
     @Query('bookDate') bookDate: string,
   ): Promise<AccountBookListBaseDto[]> {
-    const { user } = req;
     const { userSeq } = user;
     return await this.accountBookListService.getAccountBookDetailByCalendar(
       userSeq,
@@ -86,10 +84,9 @@ export class AccountBookListController {
 
   @Post()
   async createAccountBook(
-    @Req() req: RequestWithUser,
+    @GetUser() user: UserEntity,
     @Body() accountBookListdto: CreateAccountBookListDto,
   ): Promise<object> {
-    const { user } = req;
     const { userSeq } = user;
     accountBookListdto = { ...accountBookListdto, userSeq };
     const result = await this.accountBookListService.createAccountBook(
