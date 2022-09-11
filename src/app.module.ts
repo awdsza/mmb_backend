@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users/users.service';
-import { UsersController } from './users/users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { UserEntity } from './users/entity/users.entity';
-import { AccountBookListEntity } from './account-book-list/entity/AccountBookList.entity';
-import { AccountBookListController } from './account-book-list/account-book-list.controller';
-import { AccountBookListService } from './account-book-list/account-book-list.service';
 
+import { CategoryModule } from './category/category.module';
+import { AccountBookModule } from './account-book-list/accountbook.module';
+import { AuthenticationModule } from './auth/authentication.module';
 dotenv.config({
   path: path.resolve(
     process.env.NODE_ENV === 'production'
@@ -20,6 +17,9 @@ dotenv.config({
 });
 @Module({
   imports: [
+    AuthenticationModule,
+    CategoryModule,
+    AccountBookModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
@@ -30,9 +30,6 @@ dotenv.config({
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
-    TypeOrmModule.forFeature([UserEntity, AccountBookListEntity]),
   ],
-  controllers: [UsersController, AccountBookListController],
-  providers: [UsersService, AccountBookListService],
 })
 export class AppModule {}

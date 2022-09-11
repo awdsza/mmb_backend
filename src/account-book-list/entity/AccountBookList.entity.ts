@@ -9,9 +9,9 @@ export class AccountBookListEntity {
   userSeq: number;
 
   @Column({ length: 50, nullable: true })
-  inOut: string;
+  inOutType: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   bookDate: Date;
 
   @Column({ length: 100, nullable: true })

@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { AccountBookListEntity } from 'src/account-book-list/entity/AccountBookList.entity';
 @Entity('mms_user_info')
 export class UserEntity {
   @PrimaryGeneratedColumn()

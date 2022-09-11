@@ -1,16 +1,23 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { UserInfo } from './UserInfo';
+import {
+  Injectable,
+  UnprocessableEntityException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import * as uuid from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entity/users.entity';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
+import { BaseUsersDto } from './dto/base-users.dto';
 import * as bcrypt from 'bcryptjs';
 import * as jsonwebtoken from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    private jwtService: JwtService,
   ) {}
   async createUser(
     userId: string,
@@ -54,39 +61,74 @@ export class UsersService {
   async login(userId: string, password: string): Promise<object> {
     // TODO
     // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
-    let token = null;
-    const user = await this.usersRepository.findOne({
-      userId,
-    });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // 2. JWT를 발급
-      token = await jsonwebtoken.sign(
-        {
-          userId,
-          userSeq: user.userSeq,
-          userName: user.userName,
-          signVerifyToken: user.signVerifyToken,
-        },
-        process.env.SECRET_KEY,
-        { expiresIn: '7d' },
-      );
-    } else {
+    const user = await this.getUserInfo(userId);
+    if (!user) {
       throw new UnprocessableEntityException(
         '해당 이메일은 계정은 없는계정입니다. 회원가입후 시도해주세요',
       );
     }
+    if (await this.verifyPassword(password, user.password)) {
+      throw new UnprocessableEntityException('비밀번호가 틀렸습니다.');
+    }
+    // 2. JWT를 발급
+    const access_token = this.jwtService.sign(
+      {
+        userId,
+        userSeq: user.userSeq,
+        userName: user.userName,
+        signVerifyToken: user.signVerifyToken,
+      },
+      // {secre t?: string | Buffer;
+      // privateKey?: string | Buffer
+      // }
+    );
+
     return {
       isSuccess: true,
-      token,
+      access_token,
       userName: user.userName,
-      userSeq: user.userSeq,
+      syncDateTime: new Date().getTime(),
     };
   }
-
-  async getUserInfo(userId: string): Promise<UserInfo> {
-    // 1. userId를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
-    // 2. 조회된 데이터를 UserInfo 타입으로 응답
-    return await this.usersRepository.findOne(userId);
-    throw new Error('Method not implemented.');
+  async verifyPassword(
+    plainPassword: string,
+    hasedPassword: string,
+  ): Promise<object> {
+    return await bcrypt.compare(plainPassword, hasedPassword);
+  }
+  async getUserInfo(userId: string): Promise<BaseUsersDto> {
+    try {
+      return await getRepository(UserEntity)
+        .createQueryBuilder()
+        .select([
+          'userSeq',
+          'userId',
+          'userName',
+          'password',
+          'signVerifyToken',
+        ])
+        .where('userId=:userId', { userId })
+        .getRawOne();
+    } catch (e) {
+      throw new Error('Method not implemented.');
+    }
+  }
+  public async getAuthenticatedUser(
+    email: string,
+    plainPassword: string,
+  ): Promise<object> {
+    try {
+      const user = await this.getUserInfo(email);
+      const isVerifyPassword = this.verifyPassword(
+        plainPassword,
+        user.password,
+      );
+      if (!isVerifyPassword) {
+        throw new HttpException('Wrong credentials', HttpStatus.BAD_REQUEST);
+      }
+      return { ...user, password: null };
+    } catch (error) {
+      return error;
+    }
   }
 }

@@ -1,10 +1,10 @@
-import { Body, Post, Controller, Param, Get, Query } from '@nestjs/common';
+import { Req, Body, Post, Controller, Query, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserInfo } from './UserInfo';
 import { UserLoginDto } from './dto/user-login.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UsersService } from './users.service';
-import { UserEntity } from './entity/users.entity';
+import { LocalAuthenticationGuard } from 'src/auth/authentication.guard';
+import RequestWithUser from '../auth/requestWithUser.interface';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -26,15 +26,14 @@ export class UsersController {
     return;
   }
 
+  @UseGuards(LocalAuthenticationGuard)
   @Post('/login')
-  async login(@Body() dto: UserLoginDto): Promise<object> {
-    const { userId, password } = dto;
-    const jwtResult = await this.usersService.login(userId, password);
-    return jwtResult;
-  }
-
-  @Get('/:id')
-  async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
-    return this.usersService.getUserInfo(userId);
+  async login(@Req() request: RequestWithUser): Promise<object> {
+    // const { userId, password } = dto;
+    // const jwtResult = await this.usersService.login(userId, password);
+    // return jwtResult;
+    const user = request.user;
+    user.password = undefined;
+    return user;
   }
 }
