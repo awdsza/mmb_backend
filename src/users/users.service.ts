@@ -73,16 +73,14 @@ export class UsersService {
     // 2. JWT를 발급
     const access_token = this.jwtService.sign(
       {
-        isSuccess: true,
         userId,
         userSeq: user.userSeq,
         userName: user.userName,
         signVerifyToken: user.signVerifyToken,
       },
-      // {secret?: string | Buffer;
+      // {secre t?: string | Buffer;
       // privateKey?: string | Buffer
       // }
-      { secret: process.env.SECRET_KEY },
     );
 
     return {

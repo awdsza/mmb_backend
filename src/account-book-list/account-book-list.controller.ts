@@ -7,22 +7,29 @@ import {
   Param,
   Query,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListService } from './account-book-list.service';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
 import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
+import RequestWithUser from 'src/auth/requestWithUser.interface';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('accountbook')
 export class AccountBookListController {
   constructor(private accountBookListService: AccountBookListService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   async getAccountBookList(
-    @Query('userSeq') userSeq: number,
+    @Req() req: RequestWithUser,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
+    const { user } = req;
+    const { userSeq } = user;
     return await this.accountBookListService.getAccountBookList(
       userSeq,
       searchStartDate,
