@@ -3,7 +3,6 @@ import { CreateAccountBookListDto } from './dto/create-account-book-list.dto';
 import { AccountBookListEntity } from './entity/AccountBookList.entity';
 import { getRepository, Repository, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { verify } from 'jsonwebtoken';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
 import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
@@ -134,7 +133,6 @@ export class AccountBookListService {
   ): Promise<object> {
     const {
       seq,
-      token,
       inOutType,
       bookDate,
       bookTitle,
@@ -142,7 +140,6 @@ export class AccountBookListService {
       inPurpose,
       outGoingPurpose,
     } = updateAccountBookDto;
-    const decoded = await verify(token, process.env.SECRET_KEY);
 
     return this.accountBookListEntity.update(seq, {
       //userSeq: decoded.userSeq,
@@ -159,19 +156,17 @@ export class AccountBookListService {
     createAccountBookListDto: CreateAccountBookListDto,
   ): Promise<object> {
     const {
-      token,
       inOutType,
       bookDate,
       bookTitle,
       amount,
       inPurpose,
       outGoingPurpose,
+      userSeq,
     } = createAccountBookListDto;
 
-    const decoded = await verify(token, process.env.SECRET_KEY);
-
     return this.accountBookListEntity.save({
-      //    userSeq: decoded.userSeq,
+      userSeq,
       inOutType,
       bookDate,
       bookTitle,
