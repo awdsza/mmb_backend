@@ -18,11 +18,11 @@ import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
 import RequestWithUser from 'src/auth/requestWithUser.interface';
 import { AuthGuard } from '@nestjs/passport';
 @Controller('accountbook')
+@UseGuards(AuthGuard('jwt'))
 export class AccountBookListController {
   constructor(private accountBookListService: AccountBookListService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   async getAccountBookList(
     @Req() req: RequestWithUser,
     @Query('searchStartDate') searchStartDate: string,
@@ -38,10 +38,12 @@ export class AccountBookListController {
   }
   @Get('/calendar')
   async getAccountBookListByCalendar(
-    @Query('userSeq') userSeq: number,
+    @Req() req: RequestWithUser,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
+    const { user } = req;
+    const { userSeq } = user;
     return await this.accountBookListService.getAccountBookListByCalendar(
       userSeq,
       searchStartDate,
@@ -50,10 +52,12 @@ export class AccountBookListController {
   }
   @Get('/week')
   async getAccountBookWeekList(
-    @Query('userSeq') userSeq: number,
+    @Req() req: RequestWithUser,
     @Query('searchStartDate') searchStartDate: string,
     @Query('searchEndDate') searchEndDate: string,
   ): Promise<WeekAccountBookListDto[]> {
+    const { user } = req;
+    const { userSeq } = user;
     return await this.accountBookListService.getAccountBookWeekList(
       userSeq,
       searchStartDate,
@@ -63,9 +67,11 @@ export class AccountBookListController {
 
   @Get('/calendar/detail')
   async getAccountBookDetailByCalendar(
-    @Query('userSeq') userSeq: number,
+    @Req() req: RequestWithUser,
     @Query('bookDate') bookDate: string,
   ): Promise<AccountBookListBaseDto[]> {
+    const { user } = req;
+    const { userSeq } = user;
     return await this.accountBookListService.getAccountBookDetailByCalendar(
       userSeq,
       bookDate,
