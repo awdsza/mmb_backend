@@ -108,27 +108,6 @@ export class AccountBookListService {
 
     return Result;
   }
-  async getAccountBookDetailByCalendar(
-    userSeq: number,
-    bookDate: string,
-  ): Promise<AccountBookListBaseDto[]> {
-    return await getRepository(AccountBookListEntity)
-      .createQueryBuilder('accountBook')
-      .select([
-        'seq',
-        'userSeq',
-        'inOutType',
-        'bookTitle',
-        'amount',
-        'inPurpose',
-        'outGoingPurpose',
-      ])
-      .where('accountBook.userSeq=:userSeq', { userSeq })
-      .andWhere("accountBook.bookDate=DATE_FORMAT(:bookDate,'%Y-%m-%d')", {
-        bookDate,
-      })
-      .getRawMany();
-  }
 
   async getAccountBook(seq: number): Promise<AccountBookListBaseDto> {
     return await getRepository(AccountBookListEntity)
