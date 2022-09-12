@@ -3,7 +3,7 @@ export class AccountBookListBaseDto {
   readonly bookDate: object;
   readonly bookTitle: string;
   readonly amount: number;
-  readonly inPurpose: string;
+  readonly inComePurpose: string;
   readonly outGoingPurpose: string;
   userSeq: number;
 }

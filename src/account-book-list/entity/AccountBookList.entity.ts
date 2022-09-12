@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { CategoryEntity } from 'src/category/entity/category.entity';
+import {
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity('mms_account_book_list')
 export class AccountBookListEntity {
   @PrimaryGeneratedColumn()
@@ -21,7 +28,7 @@ export class AccountBookListEntity {
   amount: number;
 
   @Column({ length: 100, nullable: true })
-  inPurpose: string;
+  inComePurpose: string;
 
   @Column({ length: 10, nullable: true })
   outGoingPurpose: string;
