@@ -18,16 +18,34 @@ export class AccountBookListService {
     searchStartDate: string,
     searchEndDate: string,
   ): Promise<AccountBookListBaseDto[]> {
-    return await getRepository(AccountBookListEntity)
-      .createQueryBuilder('accountBook')
-      .where('userSeq=:userSeq', { userSeq })
-      .andWhere(
-        "accountBook.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
-        { searchStartDate, searchEndDate },
-      )
-      .orderBy('bookDate', 'DESC')
-      .getMany();
+    const result = await getConnection()
+      .createQueryBuilder()
+      .select([
+        'res.*',
+        '(select categoryName from mms_user_category sub where sub.userSeq = res.userSeq and sub.inOutType = res.inOutType and sub.category = res.category) AS categoryName',
+      ])
+      .from((subQuery) => {
+        return subQuery
+          .select([
+            'seq',
+            'userSeq',
+            'bookTitle',
+            'amount',
+            'inOutType',
+            `IFNULL((CASE WHEN inOutType = 'outGoing' THEN outGoingPurpose ELSE inComePurpose end ),999) AS category`,
+            `DATE_FORMAT(bookDate,'%Y-%m-%d') as bookDate`,
+          ])
+          .from(AccountBookListEntity, 'acc')
+          .where('userSeq=:userSeq', { userSeq })
+          .andWhere(
+            "acc.bookDate between DATE_FORMAT(:searchStartDate,'%Y-%m-%d') and DATE_FORMAT(:searchEndDate,'%Y-%m-%d')",
+            { searchStartDate, searchEndDate },
+          );
+      }, 'res')
+      .orderBy('res.bookDate', 'DESC');
+    return result.getRawMany();
   }
+
   async getAccountBookListByCalendar(
     userSeq: number,
     searchStartDate: string,
@@ -122,7 +140,7 @@ export class AccountBookListService {
         'accountBook.bookDate',
         'accountBook.bookTitle',
         'accountBook.amount',
-        'accountBook.inPurpose',
+        'accountBook.inComePurpose',
         'accountBook.outGoingPurpose',
       ])
       .where('accountBook.seq=:seq', { seq })
@@ -137,7 +155,7 @@ export class AccountBookListService {
       bookDate,
       bookTitle,
       amount,
-      inPurpose,
+      inComePurpose,
       outGoingPurpose,
     } = updateAccountBookDto;
 
@@ -147,7 +165,7 @@ export class AccountBookListService {
       bookDate,
       bookTitle,
       amount,
-      inPurpose,
+      inComePurpose,
       outGoingPurpose,
       updateDate: () => 'NOW(3)',
     });
@@ -160,7 +178,7 @@ export class AccountBookListService {
       bookDate,
       bookTitle,
       amount,
-      inPurpose,
+      inComePurpose,
       outGoingPurpose,
       userSeq,
     } = createAccountBookListDto;
@@ -171,7 +189,7 @@ export class AccountBookListService {
       bookDate,
       bookTitle,
       amount,
-      inPurpose,
+      inComePurpose,
       outGoingPurpose,
     });
   }
