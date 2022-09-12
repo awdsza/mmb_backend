@@ -15,7 +15,6 @@ import { AccountBookListService } from './account-book-list.service';
 import { AccountBookListBaseDto } from './dto/account-book-list.dto';
 import { UpdateAccountBookDto } from './dto/update-account-book.dto';
 import { WeekAccountBookListDto } from './dto/week-account-book-list.dto';
-import RequestWithUser from 'src/auth/requestWithUser.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from 'src/users/entity/users.entity';
 import { GetUser } from 'src/auth/user-decorator';
@@ -70,8 +69,9 @@ export class AccountBookListController {
     @Query('bookDate') bookDate: string,
   ): Promise<AccountBookListBaseDto[]> {
     const { userSeq } = user;
-    return await this.accountBookListService.getAccountBookDetailByCalendar(
+    return await this.accountBookListService.getAccountBookList(
       userSeq,
+      bookDate,
       bookDate,
     );
   }
