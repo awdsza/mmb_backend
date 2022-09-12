@@ -69,8 +69,9 @@ export class AccountBookListController {
     @Query('bookDate') bookDate: string,
   ): Promise<AccountBookListBaseDto[]> {
     const { userSeq } = user;
-    return await this.accountBookListService.getAccountBookDetailByCalendar(
+    return await this.accountBookListService.getAccountBookList(
       userSeq,
+      bookDate,
       bookDate,
     );
   }
